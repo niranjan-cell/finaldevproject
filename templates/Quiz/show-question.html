@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en" dir="ltr">
+   <head>
+      <meta charset="utf-8">
+      <title>Test</title>
+      <link rel="stylesheet" href="{% static 'css/stylequizquestions.css' %}">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
+   </head>
+   <body>
+      <div class="quiz-container" id="quiz">
+      <div class="quiz-header">
+        <form action="http://localhost:8000/Quiz/show-ques" class="form" method="get">
+        {% csrf_token %}<br>
+        <h2><div class="question">{{qno}}</div></h2>
+        <h2><div class="question">{{ques}}</div></h2><br>
+        <!--Option 1-->
+        <input type="radio" name="choice" id="a" class="answer" value="{{option1}}" checked><label for="a" id="a_text">{{option1}}</label><br>
+        <input type="radio" name="choice" id="b" class="answer" value="{{option2}}"><label for="b" id="b_text">{{option2}}</label><br>
+        <input type="radio" name="choice" id="c" class="answer" value="{{option3}}"><label for="c" id="c_text">{{option3}}</label><br>
+        <input type="radio" name="choice" id="d" class="answer" value="{{option4}}"><label for="d" id="d_text">{{option4}}</label><br><br>
+        
+        {% if qno != totalques %}
+        <input type="submit" class="button" value="Next">
+        {% else %}
+        <input type="submit" class="button" value="Submit">
+        {% endif %}
+      </form>
+    </div>
+</div>
+  </body>
+  </html>

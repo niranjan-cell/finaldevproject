@@ -1,0 +1,57 @@
+<html>
+{% load static %}
+<head>
+
+<title>Sign in </title>
+
+<script src="{% static 'js/validation.js' %}"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
+<link rel="stylesheet" href="{% static 'css/user.css' %}">
+</head>
+<body>
+
+{% for message in messages %}
+
+<div style="display: flex; flex-direction: row;" id="{{message.tags}}" class="message">
+<div style="width: 95%;">{{message}}</div>
+      <div align="right" onclick="remove()" style="cursor: pointer;">X</div>   
+  </div>
+  <script>
+    function remove(){
+      document.getElementsByClassName('message')[0].style.display='none'
+    }
+  </script>
+{% endfor %}
+
+<section class="signin-page">
+    <div class="sign-content">
+        <header>Login</header>
+        <form action="{% url 'signin' %}" method="post">
+            {% csrf_token %}
+            <div class="field">
+                <span class="fas fa-user-graduate"></span>
+                <input type="text" required placeholder="Username" value="{{name}}" name="username" id="username">
+             </div>
+           <div class="field space">
+              <span class="fa fa-user"></span>
+              <input type="text" required placeholder="Email" name="email" id="email">
+           </div>
+           <div class="field space">
+              <span class="fa fa-lock"></span>
+              <input type="password" class="pass-key" required placeholder="Password" name="password" id="password">
+              <span class="show" onclick="change()" id="show">SHOW</span>
+           </div>
+          <br>
+           <div class="field">
+              <input type="submit" value="LOGIN" style="background-color: #ff761b;">
+           </div>
+        </form>
+     
+        <div class="signup">
+           Don't have account?
+           <a href="{% url 'signup' %}">Signup Now</a>
+        </div>
+     </div>
+  </section>
+</body>
+</html>

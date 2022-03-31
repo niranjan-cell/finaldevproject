@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+  {% load static %}
+
+<head>
+    <title>DeveloperBox - Compiler</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.1/addon/scroll/simplescrollbars.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.1/codemirror.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.1/theme/dracula.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.2/theme/material-palenight.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.2/theme/solarized.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.2/theme/monokai.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.2/theme/material.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.2/theme/base16-light.min.css"
+    />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.1/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.1/mode/javascript/javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.2/mode/clike/clike.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.2/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.2/mode/lua/lua.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.2/mode/ruby/ruby.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.1/mode/meta.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.1/addon/scroll/simplescrollbars.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.1/addon/edit/closebrackets.min.js"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="{% static 'css/compiler.css' %}" />
+    <link
+      rel="stylesheet"
+      href="{% static 'css/bootstrap.min.css' %}"
+    />
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+  </head>
+  <style>
+    
+  #success,#danger,#alert{
+    background-color: #39a839;
+    font-family: Montserrat, sans-serif;
+    text-align: center;
+    border-radius: 3px;
+    color: white;
+    font-weight: 500;
+  }
+  #danger{
+    background-color: #d12626;
+  }
+  #alert{
+    background-color: #ffcc00;
+    color: black;
+  }
+  </style>
+  <body>
+    {% for message in messages %}
+
+<div style="display: flex; flex-direction: row;" id="{{message.tags}}" class="message">
+<div style="width: 95%;">{{message}}</div>
+      <div align="right" onclick="remove()" style="cursor: pointer;">X</div>   
+  </div>
+  <script>
+    function remove(){
+      document.getElementsByClassName('message')[0].style.display='none'
+    }
+  </script>
+{% endfor %}
+    <div>
+      <div style="float: right; width: 50%; height: 100% ;">
+      <form action="{% url 'compile' %}" method="post">
+        {% csrf_token %}
+        <textarea id="compiler-ip" name="code"></textarea>
+        <div
+          class="container"
+          style="margin-bottom: 5%; margin-top: 5%; text-align: center"
+        >
+        <input type="hidden" name='id' value="{{problem.id}}">
+        <button
+            class="btn btn-success"
+            type="submit"
+            style="width: 30%"
+          >
+            Run in Python
+          </button>
+          
+        </div>
+      </form>
+        <button
+            id="runbtn"
+            class="btn btn-success"
+            type="button"
+            style="width: 30%; margin-left: 240px;"
+            onclick="submit()"
+          >
+            Run in C++
+          </button>
+              </div>
+
+      <div style="float:right; width: 40%; margin: 3% ;  ">
+
+        <div style="display: flex; justify-content: space-between; flex-wrap: wrap;" class="wrapper1">
+          <div>
+            <ul class="nav nav-tabs" role="tablist">
+                    
+                    </li>
+                    <li class="nav-item" role="presentation">
+                      <a
+                        id="select-py"
+                        class="nav-link"
+                        role="tab"
+                        data-toggle="tab"
+                        href="#tab-2"
+                        >Python</a
+                      >
+                    </li>
+                    <li class="nav-item" role="presentation">
+                      <a
+                        id="select-cpp"
+                        class="nav-link"
+                        role="tab"
+                        data-toggle="tab"
+                        href="#tab-3"
+                        >C++</a
+                      >
+                    </li>
+                  </ul>
+                       </div>
+        
+                  <div class="themechanger">
+                    <select style="margin-left: 3%; margin-top: 10px;"  id="select">
+                      <optgroup label="Dark Themes">
+                        <option selected>Dracula</option>
+                        <option>Material-palenight</option>
+                        <option>Material</option>
+                        <option>Monokai</option>
+                      </optgroup>
+                      <optgroup label="Light Themes">
+                        <option>Solarized light</option>
+                        <option>Base16-light</option>
+                        <option>Default</option>
+                      </optgroup>
+                    </select>
+                  </div>
+        </div>
+
+        <div>
+        
+           
+          <!-- <div class="tab-content" style="margin-top: 3%">
+            <div class="tab-pane active" role="tabpanel" id="tab-1">
+              <p>Language: Node JS</p>
+              <p>Compiler: Node</p>
+            </div>
+            <div class="tab-pane" role="tabpanel" id="tab-2">
+              <p>Language: Python</p>
+              <p>Compiler: CPython 3</p>
+            </div>
+            <div class="tab-pane" role="tabpanel" id="tab-3">
+              <p>Language: C++</p>
+              <p>Compiler: GCC</p>
+            </div>
+            <div class="tab-pane" role="tabpanel" id="tab-4">
+              <p>Language: Ruby</p>
+              <p>Compiler: CRuby 2</p>
+            </div>
+            <div class="tab-pane" role="tabpanel" id="tab-5">
+              <p>Language: Lua</p>
+              <p>Compiler: Lua 5</p>
+            </div>
+          </div> -->
+        </div>
+<div style="overflow-y: scroll;" class="pagescroll">
+
+</div>
+
+        <div style="margin-top: 15px; color: darkslategray; " class="question">
+          <h5>{{problem.title}}</h5>
+        </div>
+
+
+        <p>
+          {{problem.statement}}
+        </p>
+       
+        <h6>Example1:</h6>
+        <div id="codebox" 
+        style="
+          padding: 15px;
+          font-family: Courier, sans-serif;
+          font-size: 1em;
+          line-height: 1.3;
+          color: #fff;
+          background-color: #ececec;    
+          margin-bottom: 10px;
+          border-radius: 4px;
+        ">
+          <pre><code data-language="css">
+            Input: {{problem.input}} <br>
+            Output: {{problem.output}}
+      </code></pre>
+       </div>
+
+       
+        
+        <div
+          id="msg-con"
+          class="container"
+          style="
+            border-style: dashed;
+            border-color: var(--success);
+            margin-top: 10px;
+            margin-bottom: 20px;
+            overflow: scroll;
+          "
+        >
+        {% if output %}
+          <code id="msg">{{output}}</code>
+        {% else %}
+        <code id='msg'>Press 'Run to run the code '</code>
+        {% endif %}
+        </div>
+       
+        <br />
+        
+      </div>
+    </div>
+
+    <script>
+      document.getElementById("msg-con").style.minHeight = `${
+        window.innerHeight * 0.2
+      }px`;
+      document.getElementById("msg-con").style.maxHeight = `${
+        window.innerHeight * 0.4
+      }px`;
+    </script>
+
+
+<script>
+ const JSCODE =
+  `
+// This is the Node JS template
+// Note: Do not change the function name/ default configuration
+
+function solution(input) {
+   // Write your solution from here and print the output
+}
+`.trim() + "\n";
+
+const PYCODE =
+  `
+# This is the Python template
+# Note: Do not change the function name/ default configuration
+
+def solution(input):
+    # Write your code from here and print the output
+`.trim() + "\n";
+
+const CPPCODE =
+  `
+// This is the C++ template
+// Note: Do not change the function name/ default configuration
+
+#include <iostream>
+using namespace std;
+
+void solution({{problem.datatype}} input) {
+  // Write your code from here and print the output
+}
+`.trim() + "\n";
+
+const RBCODE =
+  `
+# This is the Ruby template
+def greet(name)
+    puts "Hello, #{name}!"
+end
+greet('world')
+`.trim() + "\n";
+
+const LUACODE =
+  `
+-- This is the Lua template
+function greet(name)
+    print("Hello, " .. name .. "!")
+end
+greet("world")
+`.trim() + "\n";
+</script>
+
+    <script>
+      var Storage, cm, fetchData, lang, reset, submit, update;
+
+Storage = window.localStorage;
+
+cm = new CodeMirror.fromTextArea(document.getElementById("compiler-ip"), {
+  lineNumbers: true,
+  mode: "javascript",
+  theme: "dracula",
+  lineWrapping: true,
+  scrollbarStyle: "overlay",
+  autoCloseBrackets: true,
+});
+
+fetchData = async function (code, lang) {
+  if(lang == 'gcc-head')
+  code = code + '\nint main(){solution("{{problem.input}}"); return 0;}'
+  else
+  code = code + '\nsolution("{{problem.input}}");'
+  var msg, newData, req;
+  console.log(code)
+  req = await fetch(
+    `https://Wandbox-API.snowballsh.repl.co?code=${encodeURIComponent(
+      code
+    )}&lang=${encodeURIComponent(lang)}`
+  );
+  newData = await req.json();
+  msg = newData.program_message || newData.compiler_message || "";
+  console.log(msg)
+  if(msg == "{{problem.output}}")
+  msg = "Successfully pass the testcases"
+  document.getElementById("msg").innerHTML = msg
+    .replaceAll("\n", "<br>")
+    .replaceAll(" ", "&nbsp");
+  document.getElementById("runbtn").innerHTML = "Run in C++";
+  return (document.getElementById("runbtn").classList = "btn btn-success");
+};
+
+submit = function () {
+  var code;
+  document.getElementById("runbtn").innerHTML = "Compiling...";
+  document.getElementById("runbtn").classList = "btn btn-info";
+  code = cm.getValue();
+  update();
+  fetchData(code, lang);
+};
+
+update = function () {
+  var input, theme;
+  input = document.getElementById("select");
+  theme = input.options[input.selectedIndex].value;
+  cm.setOption("theme", theme.trim().toLowerCase());
+  localStorage.setItem("SAVETHEME", input.selectedIndex);
+  localStorage.setItem("SAVELANG", lang);
+  localStorage.setItem("SAVECODE", cm.getValue());
+};
+
+reset = function () {
+  localStorage.clear();
+};
+
+cm.setValue(JSCODE);
+
+cm.setSize("auto", window.innerHeight);
+
+lang = "nodejs-head";
+
+$(document).ready(function () {
+  var co, i, j, l, m, t, temp;
+  if ((t = localStorage.getItem("SAVETHEME"))) {
+    document.getElementById("select").selectedIndex = t;
+  }
+  cm.on("change", update);
+  if ((l = localStorage.getItem("SAVELANG"))) {
+    lang = l;
+    temp = JSCODE;
+    i = 1;
+    j = "js";
+    m = "javascript";
+    switch (l) {
+      case "cpython-head":
+        temp = PYCODE;
+        i = 2;
+        j = "py";
+        m = "python";
+        break;
+      case "nodejs-head":
+        temp = JSCODE;
+        i = 1;
+        j = "js";
+        m = "javascript";
+        break;
+      case "gcc-head":
+        temp = CPPCODE;
+        i = 3;
+        j = "cpp";
+        m = "text/x-c++src";
+        break;
+      case "ruby-head":
+        temp = RBCODE;
+        i = 4;
+        j = "rb";
+        m = "ruby";
+        break;
+      case "lua-5.4.0":
+        temp = LUACODE;
+        i = 5;
+        j = "lua";
+        m = "lua";
+    }
+    if ((co = localStorage.getItem("SAVECODE"))) {
+      temp = co;
+    }
+    $("#tab-" + i).tab("show");
+    $("#select-" + j).tab("show");
+    cm.setValue(temp);
+    cm.setOption("mode", m);
+  }
+  $("#select-py").click(function (e) {
+    e.preventDefault();
+    cm.setValue(PYCODE);
+    cm.setOption("mode", "python");
+    lang = "cpython-head";
+    update();
+  });
+  $("#select-js").click(function (e) {
+    e.preventDefault();
+    cm.setValue(JSCODE);
+    cm.setOption("mode", "javascript");
+    lang = "nodejs-head";
+    update();
+  });
+  $("#select-cpp").click(function (e) {
+    e.preventDefault();
+    cm.setValue(CPPCODE);
+    cm.setOption("mode", "text/x-c++src");
+    lang = "gcc-head";
+    update();
+  });
+  $("#select-rb").click(function (e) {
+    e.preventDefault();
+    cm.setValue(RBCODE);
+    cm.setOption("mode", "ruby");
+    lang = "ruby-head";
+    update();
+  });
+  $("#select-lua").click(function (e) {
+    e.preventDefault();
+    cm.setValue(LUACODE);
+    cm.setOption("mode", "lua");
+    lang = "lua-5.4.0";
+    update();
+  });
+  update();
+  $("select").on("change", update);
+});
+    </script>
+
+  </body>
+</html>

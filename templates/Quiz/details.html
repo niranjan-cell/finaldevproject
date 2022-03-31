@@ -1,0 +1,34 @@
+<html>
+  {% load static %}
+  <head>
+    <title>Details</title>
+    <link rel="stylesheet" href="{% static 'css/details.css' %}">
+
+  </head>
+<body>
+  
+<div class="quiz-container" id="quiz">
+      <div class="quiz-header">
+        <form action="{% url 'home' %}" method="get">
+          <button type="submit" style="border-radius: 4px; background-color: #ff944db3; height: 40px; width: 80px; font-size: 18px; cursor: pointer;">Back</button>
+        </form>
+      	<h1 style="margin: 10px;">QUIZ HISTORY</h1>
+        {% for qno,ques,useranswer,answer in zip_data %}
+        <h2><div class="question2" style="display: block; text-align: left;"><b>Ques {{qno}}</b></div></h2>
+        <h2><div class="question2">{{ques}}</div></h2><br>
+        <div class="answer">
+        {% if useranswer == answer %}
+        	<h3>Your Answer: <div class="correct-answer" >{{useranswer}}</div></h3><br>
+        {% else %}
+        <h3>Your Answer: <div class="your-answer" >{{useranswer}}</div></h3><br>
+        {% endif %}
+        	<h3>Correct Answer: <div class="correct-answer" display="inline">{{answer}}</div></h3><br>
+
+        </div>
+        {% endfor %}
+       
+    </div>
+</div>
+
+</body>
+</html>

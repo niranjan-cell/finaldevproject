@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ProBox - TODO List</title>
+    <link rel="stylesheet" href="{% static 'css/todo-list.css' %}" />
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+    <link
+      rel="stylesheet"
+      href="{% static 'css/bootstrap.min.css' %}"
+    />
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.0.3/css/font-awesome.css"
+    />
+
+  </head>
+  <body>
+    <div class="page-content page-container" id="page-content">
+      <div class="padding">
+        <div class="row container d-flex justify-content-center">
+          <div class="col-md-12">
+            <div class="card px-3">
+              <div class="card-body">
+                <h4 style="padding: 10px">My Todo List</h4>
+                <form action="{% url 'add-task' %}" method="post">
+                  {% csrf_token %}
+                <div class="add-items d-flex">
+                  <input
+                    type="text"
+                    name="task"
+                    class="form-control todo-list-input"
+                    placeholder="What do you need to do today?"
+                  />
+                  <button type="submit"
+                    class="add btn btn-primary font-weight-bold todo-list-add-btn"
+                  >
+                    Add
+                  </button>
+                </form>
+                </div>
+                <div class="list-wrapper">
+                  <ul id="main-list" class="d-flex flex-column-reverse todo-list">
+                  {% for task in tasks %}
+                    <li>
+                      <div class="form-check">
+                        <label class="form-check-label">
+                          {{task.task}}</label>
+                      </div>
+                      <a href="http://localhost:8000/todo-list/remove?id={{task.id}}" style="margin-left: auto !important;">
+                        <i class="remove mdi mdi-close-circle-outline"></i>
+                      </a>
+                    </li>
+                    {% endfor %}
+                  </ul>
+                  
+                </div>
+              </div>
+            </div>
+            <a class="btn btn-danger" style="margin: 10px" href="{% url 'reset-task' %}">
+              Reset
+          </a>
+          <a class="btn btn-danger" style="margin: 10px; background-color: grey; border-color: grey;" href="{% url 'home' %}">
+            Back
+        </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

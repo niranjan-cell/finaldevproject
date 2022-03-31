@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, shrink-to-fit=no"
+    />
+    <title>Probox - Video Recorder</title>
+    <link rel="stylesheet" href="{% static 'css/video-recorder.css' %}" />
+    <script src="{% static 'js/video-recorder.js' %}" defer></script>
+  </head>
+  <body>
+    <p>
+      Notice: This might not work if another app is using the current webcam.
+    </p>
+    <button id="record-btn">Record</button>
+    <video muted></video>
+    <video id="recorded-video" controls></video>
+  </body>
+</html>
